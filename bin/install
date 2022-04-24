@@ -1,5 +1,13 @@
 #!/bin/bash
 
+src=${1:-/home/ubuntu/nginx-site}
+site=f11snipe.sh
+conf=/etc/nginx/sites-available/$site.conf
+link=/etc/nginx/sites-enabled/$site.conf
+web=/var/www
+public=$web/$site
+admin=$web/admin.$site
+
 error() {
   red='\033[0;31m'
   nocolor='\033[0m'
@@ -29,15 +37,8 @@ if [[ $EUID -ne 0 ]]; then
   fail "This script must be run as root :)" 1
 fi
 
-site=f11snipe.sh
-conf=/etc/nginx/sites-available/$site.conf
-link=/etc/nginx/sites-enabled/$site.conf
-web=/var/www
-public=$web/$site
-admin=$web/admin.$site
-
 log "Installing $site nginx config ..."
-cp src/conf/$site.conf $conf
+cp $src/conf/$site.conf $conf
 
 if [ ! -L ]; then
   log "Enabling new conf (link $link -> $conf) ..."
@@ -46,11 +47,11 @@ fi
 
 log "Installing public web files ..."
 mkdir -p $public
-cp -r src/public/* $public/
+cp -r $src/public/* $public/
 
 log "Installing admin web files ..."
 mkdir -p $admin
-cp -r src/admin/* $admin/
+cp -r $src/admin/* $admin/
 
 log "Testing nginx configuration ..."
 nginx -t
