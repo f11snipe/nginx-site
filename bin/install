@@ -1,6 +1,6 @@
 #!/bin/bash
 
-src=${1:-/home/ubuntu/nginx-site}
+src=${1:-/home/ubuntu/nginx-site/src}
 site=f11snipe.sh
 conf=/etc/nginx/sites-available/$site.conf
 link=/etc/nginx/sites-enabled/$site.conf
