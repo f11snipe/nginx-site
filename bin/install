@@ -16,12 +16,20 @@ error() {
   echo -e "${red}${prefix}${1}${suffix}${nocolor}"
 }
 
-log() {
+warn() {
   yellow='\033[0;33m'
   nocolor='\033[0m'
   prefix="======>>  "
   suffix="  <<======"
   echo -e "${yellow}${prefix}${1}${suffix}${nocolor}"
+}
+
+log() {
+  cyan='\033[0;36m'
+  nocolor='\033[0m'
+  prefix="======>>  "
+  suffix="  <<======"
+  echo -e "${cyan}${prefix}${1}${suffix}${nocolor}"
 }
 
 fail() {
@@ -33,33 +41,65 @@ fail() {
   exit $code
 }
 
+# Function to read user input, and return boolean whether they confirm "[Y/n]"
+# NOTE: Capital "Y" typically denotes default, so no resp (just enter key) will be "yes" (true)
+confirmYes() {
+  echo ""
+  msg="${1:-Are you sure?}"
+  read -r -p "${msg} [Y/n] " response
+  case "$response" in
+    [nN][oO]|[nN])
+        return 1
+        ;;
+    *)
+        return 0
+        ;;
+  esac
+}
+
 if [[ $EUID -ne 0 ]]; then
-  fail "This script must be run as root :)" 1
+  warn "Installing will ask for sudo password :)"
+
+  if confirmYes "Continue? "; then
+    log "Running install script ..."
+  else
+    fail "Aborting"
+  fi
 fi
 
 log "Installing $site nginx config ..."
-cp $src/conf/$site.conf $conf
+sudo cp $src/conf/$site.conf $conf
 
 if [ ! -L ]; then
   log "Enabling new conf (link $link -> $conf) ..."
-  ln -s $conf $link
+  sudo ln -s $conf $link
 fi
 
 log "Installing public web files ..."
-mkdir -p $public
+if [ ! -d $public ]; then
+  warn "Creating public dir: $public ..."
+  sudo mkdir -p $public
+  sudo chown -R ubuntu:web $public
+fi
+
 cp -r $src/public/* $public/
 
 log "Installing admin web files ..."
-mkdir -p $admin
+if [ ! -d $admin ]; then
+  warn "Creating admin dir: $admin ..."
+  sudo mkdir -p $admin
+  sudo chown -R ubuntu:web $admin
+fi
+
 cp -r $src/admin/* $admin/
 
 log "Testing nginx configuration ..."
-nginx -t
+sudo nginx -t
 
 if [ $? -ne 0 ]; then
   fail "Failed nginx test. Please review configuration and any errors above." $?
 fi
 
 log "Restarting nginx service ..."
-service nginx restart
-service nginx status
+sudo service nginx restart
+sudo service nginx status
