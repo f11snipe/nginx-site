@@ -41,32 +41,6 @@ fail() {
   exit $code
 }
 
-# Function to read user input, and return boolean whether they confirm "[Y/n]"
-# NOTE: Capital "Y" typically denotes default, so no resp (just enter key) will be "yes" (true)
-confirmYes() {
-  echo ""
-  msg="${1:-Are you sure?}"
-  read -r -p "${msg} [Y/n] " response
-  case "$response" in
-    [nN][oO]|[nN])
-        return 1
-        ;;
-    *)
-        return 0
-        ;;
-  esac
-}
-
-if [[ $EUID -ne 0 ]]; then
-  warn "Installing will ask for sudo password :)"
-
-  if confirmYes "Continue? "; then
-    log "Running install script ..."
-  else
-    fail "Aborting"
-  fi
-fi
-
 log "Installing $site nginx config ..."
 sudo cp $src/conf/$site.conf $conf
 
