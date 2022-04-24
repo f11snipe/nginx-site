@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ $EUID -ne 0 ]]; then
+  fail "This script must be run as root :)" 1
+fi
+
 site=f11snipe.sh
 conf=/etc/nginx/sites-available/$site.conf
 link=/etc/nginx/sites-enabled/$site.conf
@@ -7,30 +11,54 @@ web=/var/www
 public=$web/$site
 admin=$web/admin.$site
 
-echo "Installing $site nginx config ..."
+log "Installing $site nginx config ..."
 cp src/conf/$site.conf $conf
 
 if [ ! -L ]; then
-  echo "Enabling new conf (link $link -> $conf) ..."
+  log "Enabling new conf (link $link -> $conf) ..."
   ln -s $conf $link
 fi
 
-echo "Installing public web files ..."
+log "Installing public web files ..."
 mkdir -p $public
 cp -r src/public/* $public/
 
-echo "Installing admin web files ..."
+log "Installing admin web files ..."
 mkdir -p $admin
 cp -r src/admin/* $admin/
 
-echo "Testing nginx configuration ..."
+log "Testing nginx configuration ..."
 nginx -t
 
 if [ $? -ne 0 ]; then
-  echo "Failed nginx test. Please review configuration and any errors above."
-  exit $?
+  fail "Failed nginx test. Please review configuration and any errors above." $?
 fi
 
-echo "Restarting nginx service ..."
+log "Restarting nginx service ..."
 service nginx restart
 service nginx status
+
+error() {
+  red='\033[0;31m'
+  nocolor='\033[0m'
+  prefix="======>>  "
+  suffix="  <<======"
+  echo -e "${red}${prefix}${1}${suffix}${nocolor}"
+}
+
+log() {
+  yellow='\033[0;33m'
+  nocolor='\033[0m'
+  prefix="======>>  "
+  suffix="  <<======"
+  echo -e "${yellow}${prefix}${1}${suffix}${nocolor}"
+}
+
+fail() {
+  msg=${1:-Failure}
+  code=${2:-1}
+
+  error "FATAL: $msg"
+
+  exit $code
+}
