@@ -1,8 +1,32 @@
 #!/bin/bash
 
+error() {
+  red='\033[0;31m'
+  nocolor='\033[0m'
+  prefix="======>>  "
+  suffix="  <<======"
+  echo -e "${red}${prefix}${1}${suffix}${nocolor}"
+}
+
+log() {
+  yellow='\033[0;33m'
+  nocolor='\033[0m'
+  prefix="======>>  "
+  suffix="  <<======"
+  echo -e "${yellow}${prefix}${1}${suffix}${nocolor}"
+}
+
+fail() {
+  msg=${1:-Failure}
+  code=${2:-1}
+
+  error "FATAL: $msg"
+
+  exit $code
+}
+
 if [[ $EUID -ne 0 ]]; then
-  echo "This script must be run as root :)"
-  exit 1
+  fail "This script must be run as root :)" 1
 fi
 
 site=f11snipe.sh
@@ -38,28 +62,3 @@ fi
 log "Restarting nginx service ..."
 service nginx restart
 service nginx status
-
-error() {
-  red='\033[0;31m'
-  nocolor='\033[0m'
-  prefix="======>>  "
-  suffix="  <<======"
-  echo -e "${red}${prefix}${1}${suffix}${nocolor}"
-}
-
-log() {
-  yellow='\033[0;33m'
-  nocolor='\033[0m'
-  prefix="======>>  "
-  suffix="  <<======"
-  echo -e "${yellow}${prefix}${1}${suffix}${nocolor}"
-}
-
-fail() {
-  msg=${1:-Failure}
-  code=${2:-1}
-
-  error "FATAL: $msg"
-
-  exit $code
-}
