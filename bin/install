@@ -1,0 +1,36 @@
+#!/bin/bash
+
+site=f11snipe.sh
+conf=/etc/nginx/sites-available/$site.conf
+link=/etc/nginx/sites-enabled/$site.conf
+web=/var/www
+public=$web/$site
+admin=$web/admin.$site
+
+echo "Installing $site nginx config ..."
+cp src/conf/$site.conf $conf
+
+if [ ! -L ]; then
+  echo "Enabling new conf (link $link -> $conf) ..."
+  ln -s $conf $link
+fi
+
+echo "Installing public web files ..."
+mkdir -p $public
+cp -r src/public/* $public/
+
+echo "Installing admin web files ..."
+mkdir -p $admin
+cp -r src/admin/* $admin/
+
+echo "Testing nginx configuration ..."
+nginx -t
+
+if [ $? -ne 0 ]; then
+  echo "Failed nginx test. Please review configuration and any errors above."
+  exit $?
+fi
+
+echo "Restarting nginx service ..."
+service nginx restart
+service nginx status
