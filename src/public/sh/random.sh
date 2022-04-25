@@ -54,30 +54,17 @@ confirmYes() {
         esac
 }
 
-while true; do
-        size=${#array[@]}
-        index=$(($RANDOM % $size))
-        rand=${array[$index]}
+size=${#array[@]}
+index=$(($RANDOM % $size))
+rand=${array[$index]}
+arr=('|' '/' '-' '\')
 
-        warn "Loading ascii $rand"
-
-        curl -sL https://f11snipe.sh/art/$rand
-
-        arr=('|' '/' '-' '\')
-
-        for c in $(seq 1 5); do
-                for elt in ${arr[*]}; do
-                        echo -ne "\r\033[<1>AWaiting $elt" && sleep 0.1;
-                done
+for c in $(seq 1 5); do
+        for elt in ${arr[*]}; do
+                echo -ne "\r\033[<1>ALemme think about this $elt" && sleep 0.1;
         done
-
-        echo "-"
-        echo
-
-        if confirmYes "Another?"; then
-                log "Lets goooooooo"
-        else
-                warn "Aww, goodbye"
-                exit
-        fi
 done
+
+warn "Loading ascii $rand"
+
+curl -sL https://f11snipe.sh/art/$rand
