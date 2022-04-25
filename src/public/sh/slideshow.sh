@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Library of random txt art
 array[0]="200/color/elliot-hello-friend.txt"
 array[1]="200/color/hello-friend-tall.txt"
 array[2]="200/color/hello-friend.txt"
@@ -18,7 +17,7 @@ array[13]="hackermansq.txt"
 array[14]="haha.txt"
 array[15]="hahas.txt"
 array[16]="lol.txt"
-array[16]="lols.txt"
+array[17]="lolz.txt"
 array[18]="mantra.txt"
 array[19]="nginx-full.txt"
 array[20]="nginx-icon.txt"
