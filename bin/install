@@ -7,6 +7,7 @@ link=/etc/nginx/sites-enabled/$site.conf
 web=/var/www
 public=$web/$site
 admin=$web/admin.$site
+art=$web/art
 
 error() {
   red='\033[0;31m'
@@ -66,6 +67,16 @@ if [ ! -d $admin ]; then
 fi
 
 cp -r $src/admin/* $admin/
+
+log "Installing art files ..."
+if [ ! -d $art ]; then
+  warn "Creating art dir: $art ..."
+  sudo mkdir -p $art
+  sudo chown -R ubuntu:web $art
+fi
+
+cp -r $src/art/* $art/
+
 
 log "Testing nginx configuration ..."
 sudo nginx -t
