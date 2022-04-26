@@ -1,7 +1,16 @@
 #!/bin/bash
 
-echo "Do automated F11 install"
+echo "Automated F11 install"
 
-# Detect OS/Platform
-# Download & run precompiled f11 for platform
-# :)
+platform=$(uname -s)
+
+if [[ "$platform" == "Linux" ]]; then
+  # Install on linux
+  echo "Install F11 for linux ..."
+elif [[ "$plaltform" == "Darwin" ]]; then
+  # Install on macos
+  echo "Install F11 for linux ..."
+else
+  # Install on windows
+  echo "Install F11 for windows ..."
+fi
