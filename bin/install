@@ -8,6 +8,7 @@ web=/var/www
 public=$web/$site
 admin=$web/admin.$site
 art=$web/art
+f11=$web/f11.sh
 
 error() {
   red='\033[0;31m'
@@ -77,6 +78,10 @@ fi
 
 cp -r $src/art/* $art/
 
+log "Installing F11.sh files ..."
+if [ -d $f11 ]; then
+  cp -r $src/f11.sh/* $f11/
+fi
 
 log "Testing nginx configuration ..."
 sudo nginx -t
