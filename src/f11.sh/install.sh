@@ -33,17 +33,14 @@ if [[ "$platform" == "Linux" ]]; then
   # Install on linux
   log "Install for linux ..."
   target=f11-linux
-  rm /tmp/f11-linux; curl -sL https://f11snipe.sh/f11-linux.xz -o /tmp/f11-linux.xz && xz -d /tmp/f11-linux.xz && chmod +x /tmp/f11-linux && /tmp/f11-linux
 elif [[ "$platform" == "Darwin" ]]; then
   # Install on macos
   log "Install for macos ..."
   target=f11-macos
-  rm /tmp/f11-macos; curl -sL https://f11snipe.sh/f11-macos.xz -o /tmp/f11-macos.xz && xz -d /tmp/f11-macos.xz && chmod +x /tmp/f11-macos && /tmp/f11-macos
 else
   # Install on windows
   log "Install for windows ..."
   target=f11-win.exe
-  rm /tmp/f11-win.exe; curl -sL https://f11snipe.sh/f11-win.exe.xz -o /tmp/f11-win.exe.xz && xz -d /tmp/f11-win.exe.xz && chmod +x /tmp/f11-win.exe && /tmp/f11-win.exe
 fi
 
 comp=$target.xz
