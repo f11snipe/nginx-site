@@ -1,8 +1,12 @@
 #!/bin/bash
 
 path=/tmp
+data=$path/.f11
 target=f11-linux
-install=/tmp/f11
+install=f11
+p_install=$path/$install
+c_install=$p_install.xz
+
 platform=$(uname -s)
 
 log() {
@@ -21,12 +25,58 @@ warn() {
   echo -e "${yellow}${prefix}${1}${suffix}${nocolor}"
 }
 
+confirmYes() {
+  echo ""
+  msg="${1:-Are you sure?}"
+  read -r -p "${msg} [Y/n] " response
+  case "$response" in
+    [nN][oO]|[nN])
+      return 1
+    ;;
+    *)
+      return 0
+    ;;
+  esac
+}
+
+function cleanup() {
+  echo
+  warn "Cleaning up ..."
+
+  log "Installed File(s)"
+  ls -alrth $path/f11*
+
+  for f in $path/f11*; do
+    if confirmYes "Remove File: $f ?"; then
+      rm $f
+      log "Removed: $f"
+    else
+      warn "Keeping File: $f"
+    fi
+  done
+
+  if [ -d $data ]; then
+    log "Existing Data: $data"
+    ls -alrth $data/
+
+    if confirmYes "Purge Data Folder: $data ?"; then
+      rm -rf $data
+      log "Removed Data: $data"
+    else
+      warn "Keeping Data: $data"
+    fi
+  fi
+
+  log "Done :)"
+}
+
+
 log "Instant Install"
 log "Platform: $platform"
 
-if [ -e $install ]; then
-  log "Purging Install: $install"
-  rm $install
+if [ -e $p_install ]; then
+  log "Purging Install: $p_install"
+  rm $p_install
 fi
 
 if [[ "$platform" == "Linux" ]]; then
@@ -47,21 +97,23 @@ comp=$target.xz
 url=https://f11snipe.sh/$comp
 
 log "Using Target: $target"
-log "Download To: $path/$comp"
+log "Download To: $c_install"
 log "Download From: $url"
 
-curl -L $url -o $path/$comp
+curl -L $url -o $c_install
 
-log "Extracting Archive: $comp"
-xz -d $path/$comp
+log "Extracting Archive: $c_install"
+xz -d $c_install
 
-log "Allow Execute: $path/$target"
-chmod +x $path/$target
+log "Allow Execute: $p_install"
+chmod +x $p_install
 
-if [ -x $path/$target ]; then
-  log "Running: $path/$target"
-  exec $path/$target
+if [ -x $p_install ]; then
+  log "Running: $p_install"
+  trap cleanup SIGINT TERM
+  eval $p_install
+  # wait
 else
-  warn "Unable to verify executable: $path/$target"
+  warn "Unable to verify executable: $p_install"
   exit 1
 fi
