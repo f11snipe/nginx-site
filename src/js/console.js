@@ -14,7 +14,7 @@ $(function() {
   var host = 'nginx';
   var interval, timeout;
 
-  var prompt = `${user}@${host}:${cwd}# `;
+  var prompt = () => `${user}@${host}:${cwd}# `;
   var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', 'Tab'];
   var $console = $('pre#console');
   var fileMap = {
@@ -31,20 +31,16 @@ $(function() {
   }
 
   function doPrompt() {
-    $console.append(`\n${prompt}`);
+    $console.append(`\n${prompt()}`);
   }
 
-  function render(file) {
+  function doWatch(file) {
     return setInterval(() => {
       $.get(file, (data) => {
         $console.text(data);
         scroll();
       });
-    }, 500);
-
-    // var timeout = setTimeout(() => {
-    //   clearInterval(interval);
-    // }, 30000);
+    }, 1000);
   }
 
   function activate() {
@@ -59,20 +55,27 @@ $(function() {
     var file = args[0] || allowFiles[0];
 
     if (fileMap[file]) {
-      interval = render(fileMap[file]);
+      interval = doWatch(fileMap[file]);
     }
   };
 
   var troll = {
     id: (args, cb) => cb('uid=0(root) gid=0(root) groups=0(root)'),
+    cd: (args, cb) => {
+      cwd = args[0];
+      cb('');
+    },
     pwd: (args, cb) => cb(cwd),
+    ssh: (args, cb) => cb('hahahaha, you wish!'),
+    exit: (args, cb) => cb('NO'),
+    tail: watch,
     watch,
     './watch': watch,
+    whoami: (args, cb) => cb(user),
     clear: (args, cb) => {
       $console.text('');
       cb('');
     },
-    whoami: (args, cb) => cb(user),
     cat: (args, cb) => {
       var file = args[0];
 
@@ -81,19 +84,6 @@ $(function() {
       }
 
       $.get(fileMap[file], cb);
-    },
-    tail: (args, cb) => {
-      var file = args[0];
-
-      if (!file || !fileMap[file]) {
-        return cb('hmmm, not sure what you lookin for...');
-      }
-
-      $.get(fileMap[file], (data) => {
-        var lines = data.split(`\n`);
-        var keep = lines.slice(lines.length - 10);
-        return cb(keep.join(`\n`));
-      });
     },
     ls: (args, cb) => {
       var lsTest = /^-[a-z]*l[a-z]*/;
