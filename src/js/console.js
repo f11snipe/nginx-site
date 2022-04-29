@@ -1,3 +1,7 @@
+window.navigator.__defineGetter__('userAgent', function () {
+  return 'curl/lol';
+});
+
 var LS_SIM = `access.log  error.log  snipe.log  <span class="ex">watch</span>`;
 var LS_ALL = `
 total 69
