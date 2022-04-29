@@ -13,10 +13,10 @@ $(function() {
   var cwd = '/var/log/nginx';
   var user = 'root';
   var host = 'nginx';
-  var interval, timeout;
+  var interval, pointer;
 
   var prompt = () => `${user}@${host}:${cwd}# `;
-  var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', 'Tab'];
+  var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', 'Tab', 'ArrowUp', 'ArrowDown'];
   var $console = $('pre#console');
   var fileMap = {
     'access.log': '/logs/access.log',
@@ -38,7 +38,7 @@ $(function() {
   function doWatch(file) {
     return setInterval(() => {
       $.get(file, (data) => {
-        $console.text(data);
+        $console.html(data);
         scroll();
       });
     }, 1000);
@@ -83,7 +83,7 @@ $(function() {
     './watch': watch,
     whoami: (args, cb) => cb(user),
     clear: (args, cb) => {
-      $console.text('');
+      $console.html('');
       cb('');
     },
     history: (args, cb) => cb(hist.map((v,i) => `${(i+1).toString().padStart(5)}\t${v}`).join(`\n`)),
@@ -113,6 +113,7 @@ $(function() {
   var done = () => {
     hist.push(buff.join(''));
     buff = [];
+    pointer = null;
     doPrompt();
     scroll();
   };
@@ -164,18 +165,20 @@ $(function() {
         break;
       default:
         if (event.ctrlKey && event.shiftKey) {
-          console.debug('Ignore special key', event);
+          // console.debug('Ignore special key', event);
         } else if (event.key.length === 1) {
           $console.append(event.key);
           buff.push(event.key);
         } else {
-          console.debug('Ignore special key', event);
+          // console.debug('Ignore special key', event);
         }
         break;
     }
   }
 
   function handleKey(event) {
+    if (!$console.hasClass('active')) return;
+
     switch (event.key) {
       case 'Tab':
         var current = buff.join('').trim();
@@ -200,6 +203,24 @@ $(function() {
           buff.pop();
         }
         break;
+      case 'ArrowUp':
+        if (!pointer) pointer = hist.length;
+
+        if (pointer > 0) {
+          pointer--;
+          buff = Array.from(hist[pointer]);
+          $console.html(`\n${prompt()}${buff.join('')}`);
+        }
+
+        break;
+      case 'ArrowDown':
+        if (pointer && pointer < hist.length-1) {
+          pointer++;
+          buff = Array.from(hist[pointer]);
+          $console.html(`\n${prompt()}${buff.join('')}`);
+        }
+
+        break;
       default:
         if (event.altKey || event.ctrlKey || event.shiftKey) {
           handleSpecialKey(event);
@@ -207,7 +228,7 @@ $(function() {
           $console.append(event.key);
           buff.push(event.key);
         } else {
-          console.debug('Ignoring key', event.key);
+          // console.debug('Ignoring key', event.key);
         }
         break;
     }
@@ -233,9 +254,10 @@ $(function() {
   //   }
   // });
 
+  $(document).on('keydown', handleKey);
+
   $console.on('click', function(event) {
     activate();
-    $(document).on('keydown', handleKey);
   });
 
   doPrompt();
