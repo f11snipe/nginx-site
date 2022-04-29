@@ -1,0 +1,28 @@
++----------------------------------------------------------------------+
+|ooooooooooooo++++:+:+:+:++++oooooooooooooooooooooooooooooooooooooooooo|
+|ooooooooo+:~~~:++++++++++++:..~:+++ooooooooooooooooooooooooooooooooooo|
+|ooooooo+::++++:~:++++++oooo+:~::.   .~++oooooooooooooooooooooooooooooo|
+|ooooo+~:+:. ~~~~::~:+o++++++oo+::::.  .+oooooooooooooooooooooooooooooo|
+|oooo:.+~  :+:~++++++~:oooooo+ :+oo+  :.+oooooooooooooooooooooooooooooo|
+|ooo: o+++oo.~oooooooo +ooooo +oooo+++o :oooooooooooooooooooooooooooooo|
+|ooo +oooo++ o:  .oooo :ooooo +oooooo+~..oooooooooooooooooooooooooooooo|
+|oo+.oooo++:.~~.~+oo+:.oooooo+~::.~+:~ : oooooooooooooooooooooooooooooo|
+|oo.:oooooo+o++::::~~+ooooooooo:.:++++++~.ooooooooooooooooooooooooooooo|
+|oo +oooooooooooo+oooo++++:+++  ++ ~++:.o: oooooooooooooooooooooooooooo|
+|oo.oooooooooooooooo++++++++o: o+ .~:.. :o oooooooooooooooooooooooooooo|
+|oo ooooooooooooooooo+++++++o :o :++++::.+ oooooooooooooooooooooooooooo|
+|oo.+ooooooooooooooooo++o+o+o~.o +ooooo~~~~ooo.:oooooo+~.~~.:oo+.+ooooo|
+|oo+ o++o+o+ooooooooooooooooo+ o +oooo+ + oooo.:ooooo+ :ooo+ ~o~ +ooooo|
+|ooo.:o+++o++oooooooooooooooo+ o +oooo +:.ooo+.:ooooo~ ooooo..o: +ooooo|
+|ooo+ oo+:+oo++oooo+++++ooooo+ + oooo+ o+ oooo ~++++o+ ~+++: :o~ ++++oo|
+|oooo:.oo+:+oo++ooooo+++++ooo.:: ++++o.:o +ooo~~~~~~+o+:~~~~+oo+.~~~~+o|
+|ooooo.~oo+:oo++ooooo++++++o+ o.+oo++++ o~+oooooooooooooooooooooooooooo|
+|oooooo.:o+++oo++ooo+++++++o.+o +:++::. o.+oooooooooooooooooooooooooooo|
+|ooooooo.~oo+:+oo+++oooo++:+.+o .~:.~: :o +oooooooooooooooooooooooooooo|
+|oooooooo:.+o++++++++ooooo++ :o+ ~+:~ :o:.ooooooooooooooooooooooooooooo|
+|ooooooooo+~~++oo++++++o+ooo+ +oo+++++o~.oooooooooooooooooooooooooooooo|
+|ooooooooooo++:~:++o++++++++++:~:+::::~+ooooooooooooooooooooooooooooooo|
+|ooooooooooooooo+::~~:++oooooo+::..:+oooooooooooooooooooooooooooooooooo|
+|ooooooooooooooooooo+++::::+::.++oooooooooooooooooooooooooooooooooooooo|
+|oooooooooooooooooooooooo++++oooooooooooooooooooooooooooooooooooooooooo|
++----------------------------------------------------------------------+

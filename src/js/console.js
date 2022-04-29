@@ -9,6 +9,7 @@ total 69
 
 $(function() {
   var buff = [];
+  var hist = ['wtf is going on', 'how did this console get here?', 'hopefully i can turn it off...'];
   var cwd = '/var/log/nginx';
   var user = 'root';
   var host = 'nginx';
@@ -65,9 +66,18 @@ $(function() {
       cwd = args[0];
       cb('');
     },
+    ftw: (args, cb) => $.get('/art/ftw.txt', cb),
+    snipe: (args, cb) => $.get('/art/ftw.txt', cb),
+    f11snipe: (args, cb) => $.get('/art/ftw.txt', cb),
+    lol: (args, cb) => $.get('/art/lol-70.txt', cb),
+    derp: (args, cb) => $.get('/art/derp-60.txt', cb),
+    glhf: (args, cb) => $.get('/art/glhf.txt', cb),
     pwd: (args, cb) => cb(cwd),
-    ssh: (args, cb) => cb('hahahaha, you wish!'),
-    exit: (args, cb) => cb('NO'),
+    ssh: (args, cb) => cb('You wish!'),
+    exit: (args, cb) => cb('Umm, noooo'),
+    help: (args, cb) => cb('NO!'),
+    shit: (args, cb) => cb('Watch your language!'),
+    fuck: (args, cb) => cb('Watch your language!'),
     tail: watch,
     watch,
     './watch': watch,
@@ -76,6 +86,7 @@ $(function() {
       $console.text('');
       cb('');
     },
+    history: (args, cb) => cb(hist.map((v,i) => `${(i+1).toString().padStart(5)}\t${v}`).join(`\n`)),
     cat: (args, cb) => {
       var file = args[0];
 
@@ -100,6 +111,7 @@ $(function() {
   };
 
   var done = () => {
+    hist.push(buff.join(''));
     buff = [];
     doPrompt();
     scroll();
@@ -152,12 +164,12 @@ $(function() {
         break;
       default:
         if (event.ctrlKey && event.shiftKey) {
-          // console.debug('Ignore special key', event);
+          console.debug('Ignore special key', event);
         } else if (event.key.length === 1) {
           $console.append(event.key);
           buff.push(event.key);
         } else {
-          // console.debug('Ignore special key', event);
+          console.debug('Ignore special key', event);
         }
         break;
     }
@@ -195,7 +207,7 @@ $(function() {
           $console.append(event.key);
           buff.push(event.key);
         } else {
-          // console.debug('Ignoring key', event.key);
+          console.debug('Ignoring key', event.key);
         }
         break;
     }
@@ -206,8 +218,6 @@ $(function() {
       return false;
     }
   }
-
-  $(document).on('keydown', handleKey);
 
   // $(document).on('visibilitychange', function(event) {
   //   deactivate();
@@ -225,6 +235,7 @@ $(function() {
 
   $console.on('click', function(event) {
     activate();
+    $(document).on('keydown', handleKey);
   });
 
   doPrompt();
