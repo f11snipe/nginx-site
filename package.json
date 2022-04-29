@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "serve src/public",
+    "build": "uglifyjs src/js/console.js --compress --mangle --output src/public/js/c.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +21,7 @@
   "author": "F11snipe",
   "license": "MIT",
   "devDependencies": {
-    "serve": "^13.0.2"
+    "serve": "^13.0.2",
+    "uglify-js": "^3.15.4"
   }
 }
