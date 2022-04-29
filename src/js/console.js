@@ -64,18 +64,22 @@ $(function() {
     }
   };
 
+  function art(name, cb) {
+    $.get(`/art/${name}.txt?art=curl`, cb);
+  }
+
   var troll = {
     id: (args, cb) => cb('uid=0(root) gid=0(root) groups=0(root)'),
     cd: (args, cb) => {
       cwd = args[0];
       cb('');
     },
-    ftw: (args, cb) => $.get('/art/ftw.txt', cb),
-    snipe: (args, cb) => $.get('/art/ftw.txt', cb),
-    f11snipe: (args, cb) => $.get('/art/ftw.txt', cb),
-    lol: (args, cb) => $.get('/art/lol-70.txt', cb),
-    derp: (args, cb) => $.get('/art/derp-60.txt', cb),
-    glhf: (args, cb) => $.get('/art/glhf.txt', cb),
+    ftw: (args, cb) => art('ftw', cb),
+    snipe: (args, cb) => art('ftw', cb),
+    f11snipe: (args, cb) => art('ftw', cb),
+    lol: (args, cb) => art('lol-70', cb),
+    derp: (args, cb) => art('derp-60', cb),
+    glhf: (args, cb) => art('glhf', cb),
     pwd: (args, cb) => cb(cwd),
     ssh: (args, cb) => cb('You wish!'),
     exit: (args, cb) => cb('Umm, noooo'),
