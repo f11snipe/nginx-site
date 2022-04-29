@@ -1,8 +1,9 @@
-var LS_SIM = `access.log  error.log  <span class="ex">watch</span>`;
+var LS_SIM = `access.log  error.log  snipe.log  <span class="ex">watch</span>`;
 var LS_ALL = `
-total 92
+total 69
 -rw-r----- 1 root root    69 Apr 29 16:22 access.log
 -rw-r----- 1 root root    69 Apr 29 16:22 error.log
+-rw-r----- 1 root root    69 Apr 29 16:22 snipe.log
 -rwxr-xr-x 1 root root   118 Apr 29 17:20 <span class="ex">watch</span>
 `;
 
@@ -19,6 +20,7 @@ $(function() {
   var fileMap = {
     'access.log': '/logs/access.log',
     'error.log': '/logs/error.log',
+    'snipe.log': '/logs/snipe.log',
     'watch': '/logs/watch.sh'
   };
   var allowFiles = Object.keys(fileMap);
