@@ -1,0 +1,9 @@
+W: `require 'RMagick'` is deprecated, please change to `require 'rmagick'`
+ERROR: You must specify a path or URL to convert
+Usage: asciiart [options] <path_or_url>
+    -w, --width WIDTH                Width of the finished Ascii Art (Default: 100)
+    -f, --format [text/html]         output format (Default: text)
+    -c, --color                      Switch to use colored terminal output (Default: false)
+    -i, --invert-chars               Invert the character map. Depending on your terminal and image this can make the image clearer (or a lot worse)
+    -v, --version                    Show AsciiArt version
+    -h, --help                       Show this message

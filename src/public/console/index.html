@@ -54,11 +54,6 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="btn btn-outline-warning" href="/console">console</a>
-            </li>
-          </ul>
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#resources" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -66,7 +61,7 @@
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="/rc/">/rc/ (config files)</a>
-                <a class="dropdown-item" href="/sh/">/sh/ (scripts and shit)</a>
+                <a class="dropdown-item" href="/sh/">/sh/ (shell/bash scripts)</a>
                 <a class="dropdown-item" href="/rb/">/rb/ (ruby scripts)</a>
                 <a class="dropdown-item" href="/py/">/py/ (python scripts)</a>
                 <a class="dropdown-item" href="/php/">/php/ (php scripts)</a>
@@ -89,28 +84,14 @@
     <div class="container">
       <div class="p-5">
         <div class="jumbotron">
-          <h1 class="display-4">hello, friend</h1>
+          <h1 class="display-4">console</h1>
           <p class="lead">
-            This is a simple site with a collection of helpful resources & scripts.
-            <br />
-            You can explore available resources, and use them via curl/wget/etc request to this url.
+            this looks interesting ...
           </p>
+          <pre id="console"></pre>
           <p class="lead">
             <a target="_blank" rel="noopener noreferrer" href="https://nginx.org/en/docs/">nginx</a> is the shit.
           </p>
-          <hr class="my-4">
-          <h3>Scripts:</h3>
-          <p class="lead">Print random ascii art <a href="/sh/random.sh">random.sh</a> script</p>
-          <pre class="text-light bg-dark p-3">curl -sL https://f11snipe.sh/rand | bash</pre>
-          <p class="lead">Keep printing random art. <a href="/sh/slideshow.sh">slideshow.sh</a> script</p>
-          <pre class="text-light bg-dark p-3">curl -sL https://f11snipe.sh/show | bash</pre>
-          <p class="lead">Run simple ubuntu/debian <a href="/sh/bootstrap.sh">bootstrap.sh</a> script</p>
-          <pre class="text-light bg-dark p-3">curl -sL https://f11snipe.sh/boot | bash</pre>
-          <h3>Configs:</h3>
-          <p class="lead">Simple default <a href="/rc/vimrc">vimrc</a> config</p>
-          <pre class="text-light bg-dark p-3">curl -sL https://f11snipe.sh/rc/vimrc -o ~/.vimrc</pre>
-          <p class="lead">Starter template <a href="/rc/zshrc">zshrc</a> config</p>
-          <pre class="text-light bg-dark p-3">curl -sL https://f11snipe.sh/rc/zshrc -o ~/.zshrc && source ~/.zshrc</pre>
         </div>
         <footer class="text-muted text-center">
           <hr class="my-4">
@@ -124,5 +105,10 @@
         </footer>
       </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+      integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/js/console.js"></script>
   </body>
 </html>

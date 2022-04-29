@@ -2,4 +2,63 @@ body {
   font-family: 'Syne Mono', monospace;
 }
 
+.ex {
+  color: green;
+  font-weight: bold;
+}
 
+pre#console {
+  background: black;
+  color: white;
+  padding: 25px;
+  font-size: 12px;
+  line-height: 15px;
+  height: 500px;
+  overflow-y: scroll;
+  opacity: 0.65;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+pre#console:after {
+  content: '[click here]';
+  opacity: 1;
+  display: inline-block;
+  animation: blink 0.75s linear infinite alternate;
+  /* content: '';
+  width: 8px;
+  height: 16px;
+  margin-bottom: -4px;
+  background: white;
+  opacity: 0;
+  display: inline-block;
+  animation: blink 0.75s linear infinite alternate; */
+}
+
+pre#console.active {
+  opacity: 1;
+
+}
+
+pre#console.active:after {
+  content: '';
+  width: 8px;
+  height: 16px;
+  margin-bottom: -4px;
+  background: white;
+  opacity: 0;
+  display: inline-block;
+  animation: blink 0.75s linear infinite alternate;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}

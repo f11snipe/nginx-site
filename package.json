@@ -1,0 +1,25 @@
+{
+  "name": "nginx-site",
+  "version": "1.0.0",
+  "description": "Simple tricks +|& lol's with nginx configs",
+  "main": "index.js",
+  "scripts": {
+    "start": "serve src/public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-snipe:f11snipe/nginx-site"
+  },
+  "keywords": [
+    "nginx",
+    "troll",
+    "site",
+    "scripts"
+  ],
+  "author": "F11snipe",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^13.0.2"
+  }
+}
