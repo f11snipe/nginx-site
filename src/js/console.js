@@ -17,7 +17,7 @@ $(function() {
   var cwd = '/var/log/nginx';
   var user = 'root';
   var host = 'nginx';
-  var timeout, pointer;
+  var interval, pointer;
 
   var prompt = () => `${user}@${host}:${cwd}# `;
   var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', 'Tab', 'ArrowUp', 'ArrowDown'];
@@ -39,15 +39,17 @@ $(function() {
     $console.append(`\n${prompt()}`);
   }
 
-  function doWatch(file) {
-    timeout = setTimeout(() => {
-      $.get(file, (data) => {
-        $console.html(data);
-        scroll();
-      });
+  function getLogs(file) {
+    $.get(file, (data) => {
+      $console.html(data);
+      scroll();
+    });
+  }
 
-      doWatch(file);
-    }, 1000);
+  function doWatch(file) {
+    interval = setInterval(() => {
+      getLogs(file);
+    }, 500);
   }
 
   function activate() {
@@ -61,7 +63,7 @@ $(function() {
   var watch = (args, cb) => {
     var file = args[0] || allowFiles[0];
 
-    if (timeout) clearTimeout(timeout);
+    if (interval) clearInterval(interval);
 
     if (fileMap[file]) {
       doWatch(fileMap[file]);
@@ -157,8 +159,8 @@ $(function() {
       case 'z':
       case 'Z':
         if (event.ctrlKey) {
-          if (timeout) {
-            clearTimeout(timeout);
+          if (interval) {
+            clearInterval(interval);
             done();
           }
         }
