@@ -1,7 +1,3 @@
-window.navigator.__defineGetter__('userAgent', function () {
-  return 'curl/lol';
-});
-
 var LS_SIM = `access.log  error.log  snipe.log  <span class="ex">watch</span>`;
 var LS_ALL = `
 total 69
@@ -17,6 +13,14 @@ $(function() {
   var cwd = '/var/log/nginx';
   var user = 'root';
   var host = 'nginx';
+  var processor = 'x86_64';
+  var kernelRel = '5.13.0-1022-aws';
+  var kernelName = 'Linux';
+  var operationSys = 'GNU/Linux';
+  var machine = processor;
+  var hardware = processor;
+  var kernelVer = '#24~20.04.1-Ubuntu SMP Thu Apr 7 22:10:15 UTC 2022'
+  var uname = `${kernelName} ${host} ${kernelRel} ${kernelVer} ${machine} ${processor} ${hardware} ${operationSys}`;
   var interval, pointer;
 
   var prompt = () => `${user}@${host}:${cwd}# `;
@@ -74,11 +78,93 @@ $(function() {
     $.get(`/art/${name}.txt?art=curl`, cb);
   }
 
+  /**
+   *
+      uname -a
+      curl
+      wget
+      cat /etc/passwd
+      groups
+      cat /etc/crontab
+      cat /etc/sudoers.d
+      ls -la /opt
+      reboot
+      sudo -l
+      sudo su
+      nc
+      echo
+      cat /root/.ssh/id_rsahostname
+      uname -a
+      curl
+      wget
+      cat /etc/passwd
+      groups
+      cat /etc/crontab
+      cat /etc/sudoers.d
+      ls -la /opt
+      reboot
+      sudo -l
+      sudo su
+      nc
+      echo
+      cat /root/.ssh/id_rsa
+   */
+
   var troll = {
     id: (args, cb) => cb('uid=0(root) gid=0(root) groups=0(root)'),
     cd: (args, cb) => {
       cwd = args[0];
       cb('');
+    },
+    uname: (args, cb) => {
+      if (!args[0]) return cb('Linux');
+
+      switch (args[0]) {
+        case '-a':
+          return cb(uname);
+        case '-s':
+          return cb(kernelName);
+        case '-n':
+          return cb(host);
+        case '-r':
+          return cb(kernelRel);
+        case '-m':
+          return cb(machine);
+        case '-p':
+          return cb(processor);
+        case '-i':
+          return cb(hardware);
+        case '-o':
+          return cb(operationSys);
+        case '--help':
+          return cb(`
+Usage: uname [OPTION]...
+Print certain system information.  With no OPTION, same as -s.
+
+  -a, --all                print all information, in the following order,
+                              except omit -p and -i if unknown:
+  -s, --kernel-name        print the kernel name
+  -n, --nodename           print the network node hostname
+  -r, --kernel-release     print the kernel release
+  -v, --kernel-version     print the kernel version
+  -m, --machine            print the machine hardware name
+  -p, --processor          print the processor type (non-portable)
+  -i, --hardware-platform  print the hardware platform (non-portable)
+  -o, --operating-system   print the operating system
+      --help     display this help and exit
+      --version  output version information and exit
+
+GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
+Report uname translation bugs to <https://translationproject.org/team/>
+Full documentation at: <https://www.gnu.org/software/coreutils/uname>
+or available locally via: info '(coreutils) uname invocation'
+`);
+        default:
+          return cb(`
+uname: invalid option -- '${args[0] ? args[0].replace(/^-/,''): ''}'
+Try 'uname --help' for more information.
+`);
+      }
     },
     ftw: (args, cb) => art('ftw', cb),
     snipe: (args, cb) => art('ftw', cb),
@@ -92,6 +178,8 @@ $(function() {
     help: (args, cb) => cb('NO!'),
     shit: (args, cb) => cb('Watch your language!'),
     fuck: (args, cb) => cb('Watch your language!'),
+    host: (args, cb) => cb(host),
+    hostname: (args, cb) => cb(host),
     tail: watch,
     watch,
     './watch': watch,
