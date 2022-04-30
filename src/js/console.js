@@ -101,13 +101,17 @@ User ubuntu may run the following commands on localhost:
     elem.scrollTop = elem.scrollHeight;
   }
 
+  function safeText(str) {
+    return $(`<span>${str}</span>`).text();
+  }
+
   function doPrompt() {
     $console.append(`\n${prompt()}`);
   }
 
   function getLogs(file) {
     $.get(file, (data) => {
-      $console.text(data);
+      $console.text(safeText(data));
       scroll();
     });
   }
@@ -137,7 +141,7 @@ User ubuntu may run the following commands on localhost:
   };
 
   function art(name, cb) {
-    $.get(`/art/${name}.txt?art=curl`, cb);
+    $.get(`/art/${name}.txt?art=curl`, (data) => cb(safeText(data)));
   }
 
   /**
@@ -284,7 +288,7 @@ Try 'uname --help' for more information.
         return cb('hmmm, not sure what you lookin for...');
       }
 
-      $.get(fileMap[file], cb);
+      $.get(fileMap[file], (data) => cb(safeText(data)));
     },
     ls: (args, cb) => {
       var lsTest = /^-[a-z]*l[a-z]*/;
