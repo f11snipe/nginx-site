@@ -17,15 +17,15 @@ $(function() {
   var cwd = '/var/log/nginx';
   var user = 'root';
   var host = 'nginx';
-  var interval, pointer;
+  var timeout, pointer;
 
   var prompt = () => `${user}@${host}:${cwd}# `;
   var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', 'Tab', 'ArrowUp', 'ArrowDown'];
   var $console = $('pre#console');
   var fileMap = {
-    'access.log': '/logs/access.log',
-    'error.log': '/logs/error.log',
     'snipe.log': '/logs/snipe.log',
+    'error.log': '/logs/error.log',
+    'access.log': '/logs/access.log',
     'watch': '/logs/watch.sh'
   };
   var allowFiles = Object.keys(fileMap);
@@ -40,11 +40,13 @@ $(function() {
   }
 
   function doWatch(file) {
-    return setInterval(() => {
+    timeout = setTimeout(() => {
       $.get(file, (data) => {
         $console.html(data);
         scroll();
       });
+
+      doWatch(file);
     }, 1000);
   }
 
@@ -59,8 +61,10 @@ $(function() {
   var watch = (args, cb) => {
     var file = args[0] || allowFiles[0];
 
+    if (timeout) clearTimeout(timeout);
+
     if (fileMap[file]) {
-      interval = doWatch(fileMap[file]);
+      doWatch(fileMap[file]);
     }
   };
 
@@ -153,8 +157,8 @@ $(function() {
       case 'z':
       case 'Z':
         if (event.ctrlKey) {
-          if (interval) {
-            clearInterval(interval);
+          if (timeout) {
+            clearTimeout(timeout);
             done();
           }
         }
