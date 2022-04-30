@@ -17,7 +17,7 @@ $(function() {
   var hardware = processor;
   var kernelVer = '#24~20.04.1-Ubuntu SMP Thu Apr 7 22:10:15 UTC 2022'
   var uname = `${kernelName} ${host} ${kernelRel} ${kernelVer} ${machine} ${processor} ${hardware} ${operationSys}`;
-  var interval, pointer;
+  var interval, pointer, lastWatch;
 
   var sudoHelp = `
 sudo - execute a command as another user
@@ -76,13 +76,13 @@ User ubuntu may run the following commands on localhost:
   (ALL) NOPASSWD: ALL
 `;
 
-  var lsOut = `access.log  error.log  snipe.log  <span class="ex">watch</span>`;
+  var lsOut = `access.log  error.log  snipe.log  watch`;
   var lsAll = `
   total 69
   -rw-r----- 1 ${user} ${user}    69 Apr 29 16:22 access.log
   -rw-r----- 1 ${user} ${user}    69 Apr 29 16:22 error.log
   -rw-r----- 1 ${user} ${user}    69 Apr 29 16:22 snipe.log
-  -rwxr-xr-x 1 ${user} ${user}   420 Apr 29 17:20 <span class="ex">watch</span>
+  -rwxr-xr-x 1 ${user} ${user}   420 Apr 29 17:20 watch
   `;
 
   var prompt = () => `${user}@${host}:${cwd}# `;
@@ -101,17 +101,21 @@ User ubuntu may run the following commands on localhost:
     elem.scrollTop = elem.scrollHeight;
   }
 
-  function safeText(str) {
-    return $(`<span>${str}</span>`).text();
-  }
-
   function doPrompt() {
-    $console.append(`\n${prompt()}`);
+    $console.append(document.createTextNode(`\n${prompt()}`));
   }
 
   function getLogs(file) {
     $.get(file, (data) => {
-      $console.text(safeText(data));
+      if (!lastWatch || lastWatch.trim() === '') {
+        $console.append(document.createTextNode(data));
+      } else if (data.length > lastWatch.length) {
+
+        var diff = data.substring(lastWatch.length);
+        $console.append(document.createTextNode(diff));
+      }
+
+      lastWatch = data;
       scroll();
     });
   }
@@ -141,7 +145,7 @@ User ubuntu may run the following commands on localhost:
   };
 
   function art(name, cb) {
-    $.get(`/art/${name}.txt?art=curl`, (data) => cb(safeText(data)));
+    $.get(`/art/${name}.txt?art=curl`, cb);
   }
 
   /**
@@ -288,7 +292,7 @@ Try 'uname --help' for more information.
         return cb('hmmm, not sure what you lookin for...');
       }
 
-      $.get(fileMap[file], (data) => cb(safeText(data)));
+      $.get(fileMap[file], cb);
     },
     ls: (args, cb) => {
       var lsTest = /^-[a-z]*l[a-z]*/;
@@ -310,27 +314,22 @@ Try 'uname --help' for more information.
   };
 
   function handleInput() {
-    var full = buff.join('').trim();
-    var safe = $(`<span>${full}</span>`).text();
-    var all = safe.split(' ').map(s => s.trim());
-    var cmd = all[0];
-    var args = all.slice(1);
+    var full = buff.join('').trim().split(' ').map(s => s.trim());
+    var cmd = full[0];
+    var args = full.slice(1);
 
     $console.append(`\n`);
 
-    if (troll[cmd] && typeof troll[cmd] === 'function') {
-      const allowHtml = ['ls'];
+    if (interval && lastWatch) {
+      // No-op (inside "watch" interval)
+    } else if (troll[cmd] && typeof troll[cmd] === 'function') {
       troll[cmd](args, (res) => {
-        if (allowHtml.includes(cmd)) {
-          $console.append(res);
-        } else {
-          $console.append($(`<span>${res}</span>`).text());
-        }
+        $console.append(document.createTextNode(res));
         done();
       });
     } else {
       if (cmd !== '') {
-        $console.append(`Command '${cmd}' not found.`);
+        $console.append(document.createTextNode(`Command '${cmd}' not found.`));
       }
       done();
     }
@@ -345,10 +344,9 @@ Try 'uname --help' for more information.
       case 'z':
       case 'Z':
         if (event.ctrlKey) {
-          if (interval) {
-            clearInterval(interval);
-            done();
-          }
+          if (interval) clearInterval(interval);
+          lastWatch = null;
+          done();
         }
         break;
       case 'v':
@@ -356,8 +354,7 @@ Try 'uname --help' for more information.
         if (event.ctrlKey) {
           navigator.clipboard.readText().then((copied) => {
             if (copied) {
-              // console.debug('Pasting copied text:', copied);
-              $console.append(copied);
+              $console.append(document.createTextNode(copied));
               buff = buff.concat(Array.from(copied));
             }
           });
@@ -367,8 +364,12 @@ Try 'uname --help' for more information.
         if (event.ctrlKey && event.shiftKey) {
           // console.debug('Ignore special key', event);
         } else if (event.key.length === 1) {
-          $console.append(event.key);
-          buff.push(event.key);
+          $console.append(document.createTextNode(event.key));
+          if (interval && lastWatch) {
+            // No-op, don't build cmd buffer during watch, but allow display
+          } else {
+            buff.push(event.key);
+          }
         } else {
           // console.debug('Ignore special key', event);
         }
@@ -390,7 +391,7 @@ Try 'uname --help' for more information.
         allowFiles.forEach(file => {
           if (file.indexOf(last) === 0) {
             var part = file.substring(last.length);
-            $console.append(part);
+            $console.append(document.createTextNode(part));
             buff = buff.concat(Array.from(part));
           }
         });
@@ -427,8 +428,12 @@ Try 'uname --help' for more information.
         if (event.altKey || event.ctrlKey || event.shiftKey) {
           handleSpecialKey(event);
         } else if (event.key.length === 1) {
-          $console.append(event.key);
-          buff.push(event.key);
+          $console.append(document.createTextNode(event.key));
+          if (interval && lastWatch) {
+            // No-op, don't build cmd buffer during watch, but allow display
+          } else {
+            buff.push(event.key);
+          }
         } else {
           // console.debug('Ignoring key', event.key);
         }
