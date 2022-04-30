@@ -1,18 +1,14 @@
-var LS_SIM = `access.log  error.log  snipe.log  <span class="ex">watch</span>`;
-var LS_ALL = `
-total 69
--rw-r----- 1 root root    69 Apr 29 16:22 access.log
--rw-r----- 1 root root    69 Apr 29 16:22 error.log
--rw-r----- 1 root root    69 Apr 29 16:22 snipe.log
--rwxr-xr-x 1 root root   420 Apr 29 17:20 <span class="ex">watch</span>
-`;
-
 $(function() {
   var buff = [];
   var hist = ['wtf is going on', 'how did this console get here?', 'hopefully i can turn it off...'];
   var cwd = '/var/log/nginx';
-  var user = 'root';
+  var uid = 1000;
+  var gid = 1000;
+  var user = 'f11snipe';
   var host = 'nginx';
+  var userGroups = [{ gid, name: user }, { gid: 1001, name: 'web' }];
+  var rootGroups = [{ gid: 0, name: 'root' }];
+  var groups = userGroups;
   var processor = 'x86_64';
   var kernelRel = '5.13.0-1022-aws';
   var kernelName = 'Linux';
@@ -23,8 +19,74 @@ $(function() {
   var uname = `${kernelName} ${host} ${kernelRel} ${kernelVer} ${machine} ${processor} ${hardware} ${operationSys}`;
   var interval, pointer;
 
+  var sudoHelp = `
+sudo - execute a command as another user
+
+usage: sudo -h | -K | -k | -V
+usage: sudo -v [-AknS] [-g group] [-h host] [-p prompt] [-u user]
+usage: sudo -l [-AknS] [-g group] [-h host] [-p prompt] [-U user] [-u user] [command]
+usage: sudo [-AbEHknPS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p prompt] [-T timeout] [-u user] [VAR=value] [-i|-s] [<command>]
+usage: sudo -e [-AknS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p prompt] [-T timeout] [-u user] file ...
+
+Options:
+  -A, --askpass                 use a helper program for password prompting
+  -b, --background              run command in the background
+  -B, --bell                    ring bell when prompting
+  -C, --close-from=num          close all file descriptors >= num
+  -E, --preserve-env            preserve user environment when running command
+      --preserve-env=list       preserve specific environment variables
+  -e, --edit                    edit files instead of running a command
+  -g, --group=group             run command as the specified group name or ID
+  -H, --set-home                set HOME variable to target user's home dir
+  -h, --help                    display help message and exit
+  -h, --host=host               run command on host (if supported by plugin)
+  -i, --login                   run login shell as the target user; a command may also be specified
+  -K, --remove-timestamp        remove timestamp file completely
+  -k, --reset-timestamp         invalidate timestamp file
+  -l, --list                    list user's privileges or check a specific command; use twice for longer format
+  -n, --non-interactive         non-interactive mode, no prompts are used
+  -P, --preserve-groups         preserve group vector instead of setting to target's
+  -p, --prompt=prompt           use the specified password prompt
+  -r, --role=role               create SELinux security context with specified role
+  -S, --stdin                   read password from standard input
+  -s, --shell                   run shell as the target user; a command may also be specified
+  -t, --type=type               create SELinux security context with specified type
+  -T, --command-timeout=timeout terminate command after the specified time limit
+  -U, --other-user=user         in list mode, display privileges for user
+  -u, --user=user               run command (or edit file) as specified user name or ID
+  -V, --version                 display version information and exit
+  -v, --validate                update user's timestamp without running a command
+  --                            stop processing command line arguments
+`;
+
+  var sudoUsage = `
+usage: sudo -h | -K | -k | -V
+usage: sudo -v [-AknS] [-g group] [-h host] [-p prompt] [-u user]
+usage: sudo -l [-AknS] [-g group] [-h host] [-p prompt] [-U user] [-u user] [command]
+usage: sudo [-AbEHknPS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p prompt] [-T timeout] [-u user] [VAR=value] [-i|-s] [<command>]
+usage: sudo -e [-AknS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p prompt] [-T timeout] [-u user] file ...
+`;
+
+  var sudoList = `
+Matching Defaults entries for ubuntu on localhost:
+  insults, env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User ubuntu may run the following commands on localhost:
+  (ALL : ALL) ALL
+  (ALL) NOPASSWD: ALL
+`;
+
+  var lsOut = `access.log  error.log  snipe.log  <span class="ex">watch</span>`;
+  var lsAll = `
+  total 69
+  -rw-r----- 1 ${user} ${user}    69 Apr 29 16:22 access.log
+  -rw-r----- 1 ${user} ${user}    69 Apr 29 16:22 error.log
+  -rw-r----- 1 ${user} ${user}    69 Apr 29 16:22 snipe.log
+  -rwxr-xr-x 1 ${user} ${user}   420 Apr 29 17:20 <span class="ex">watch</span>
+  `;
+
   var prompt = () => `${user}@${host}:${cwd}# `;
-  var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', 'Tab', 'ArrowUp', 'ArrowDown'];
+  var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', "'", '"', 'Tab', 'ArrowUp', 'ArrowDown'];
   var $console = $('pre#console');
   var fileMap = {
     'snipe.log': '/logs/snipe.log',
@@ -80,7 +142,6 @@ $(function() {
 
   /**
    *
-      uname -a
       curl
       wget
       cat /etc/passwd
@@ -111,7 +172,7 @@ $(function() {
    */
 
   var troll = {
-    id: (args, cb) => cb('uid=0(root) gid=0(root) groups=0(root)'),
+    id: (args, cb) => cb(`uid=${uid}(${user}) gid=${gid}(${user}) groups=${groups.map(g => `${g.gid}(${g.name})`).join(',')}`),
     cd: (args, cb) => {
       cwd = args[0];
       cb('');
@@ -166,6 +227,24 @@ Try 'uname --help' for more information.
 `);
       }
     },
+    sudo: (args, cb) => {
+      if (!args[0]) {
+        cb(sudoUsage);
+      } else if (args[0] === '--help' || args[0] === '-h') {
+        cb(sudoHelp);
+      } else if (args[0] === 'su') {
+        uid = 0;
+        gid = 0;
+        user = 'root';
+        groups = rootGroups;
+        cb('');
+      } else if (args[0] === '-l') {
+        cb(sudoList);
+      } else {
+        cb(sudoUsage);
+      }
+    },
+    groups: (args, cb) => cb(groups.map(g => g.name).join(' ')),
     ftw: (args, cb) => art('ftw', cb),
     snipe: (args, cb) => art('ftw', cb),
     f11snipe: (args, cb) => art('ftw', cb),
@@ -174,7 +253,16 @@ Try 'uname --help' for more information.
     glhf: (args, cb) => art('glhf', cb),
     pwd: (args, cb) => cb(cwd),
     ssh: (args, cb) => cb('You wish!'),
-    exit: (args, cb) => cb('Umm, noooo'),
+    exit: (args, cb) => {
+      if (user !== 'f11snipe') {
+        uid = 1000;
+        gid = 1000;
+        user = 'f11snipe';
+        cb('');
+      } else {
+        cb('Umm, noooo');
+      }
+    },
     help: (args, cb) => cb('NO!'),
     shit: (args, cb) => cb('Watch your language!'),
     fuck: (args, cb) => cb('Watch your language!'),
@@ -200,15 +288,12 @@ Try 'uname --help' for more information.
     },
     ls: (args, cb) => {
       var lsTest = /^-[a-z]*l[a-z]*/;
-      var lsOut = 'none';
 
       if (!args[0] || !lsTest.test(args[0])) {
-        lsOut = LS_SIM;
+        cb(lsOut);
       } else if (args[0] && lsTest.test(args[0])) {
-        lsOut = LS_ALL;
+        cb(lsAll);
       }
-
-      cb(lsOut);
     },
   };
 
@@ -233,7 +318,9 @@ Try 'uname --help' for more information.
         done();
       });
     } else {
-      $console.append(`Command '${cmd}' not found.`);
+      if (cmd !== '') {
+        $console.append(`Command '${cmd}' not found.`);
+      }
       done();
     }
   }
