@@ -86,7 +86,7 @@ User ubuntu may run the following commands on localhost:
   `;
 
   var prompt = () => `${user}@${host}:${cwd}# `;
-  var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', "'", '"', 'Tab', 'ArrowUp', 'ArrowDown'];
+  var disableKeys = ['/', '$', '\\', '-', '*', '&', '^', '#', '@', ' ', '!', '(', ')', '[', ']', '|', "'", '"', '<', '>', 'Tab', 'ArrowUp', 'ArrowDown'];
   var $console = $('pre#console');
   var fileMap = {
     'snipe.log': '/logs/snipe.log',
@@ -107,7 +107,7 @@ User ubuntu may run the following commands on localhost:
 
   function getLogs(file) {
     $.get(file, (data) => {
-      $console.html(data);
+      $console.text(data);
       scroll();
     });
   }
@@ -273,7 +273,7 @@ Try 'uname --help' for more information.
     './watch': watch,
     whoami: (args, cb) => cb(user),
     clear: (args, cb) => {
-      $console.html('');
+      $console.text('');
       cb('');
     },
     history: (args, cb) => cb(hist.map((v,i) => `${(i+1).toString().padStart(5)}\t${v}`).join(`\n`)),
@@ -306,15 +306,22 @@ Try 'uname --help' for more information.
   };
 
   function handleInput() {
-    var full = buff.join('').split(' ');
-    var cmd = full[0];
-    var args = full.slice(1);
+    var full = buff.join('').trim();
+    var safe = $(`<span>${full}</span>`).text();
+    var all = safe.split(' ').map(s => s.trim());
+    var cmd = all[0];
+    var args = all.slice(1);
 
     $console.append(`\n`);
 
     if (troll[cmd] && typeof troll[cmd] === 'function') {
+      const allowHtml = ['ls'];
       troll[cmd](args, (res) => {
-        $console.append(res);
+        if (allowHtml.includes(cmd)) {
+          $console.append(res);
+        } else {
+          $console.append($(`<span>${res}</span>`).text());
+        }
         done();
       });
     } else {
@@ -368,6 +375,8 @@ Try 'uname --help' for more information.
   function handleKey(event) {
     if (!$console.hasClass('active')) return;
 
+    // console.log(event.key, event);
+
     switch (event.key) {
       case 'Tab':
         var current = buff.join('').trim();
@@ -388,7 +397,7 @@ Try 'uname --help' for more information.
         break;
       case 'Backspace':
         if (buff.length) {
-          $console.html($console.html().slice(0, -1));
+          $console.text($console.text().slice(0, -1));
           buff.pop();
         }
         break;
@@ -398,7 +407,7 @@ Try 'uname --help' for more information.
         if (pointer > 0) {
           pointer--;
           buff = Array.from(hist[pointer]);
-          $console.html(`\n${prompt()}${buff.join('')}`);
+          $console.text(`\n${prompt()}${buff.join('')}`);
         }
 
         break;
@@ -406,7 +415,7 @@ Try 'uname --help' for more information.
         if (pointer && pointer < hist.length-1) {
           pointer++;
           buff = Array.from(hist[pointer]);
-          $console.html(`\n${prompt()}${buff.join('')}`);
+          $console.text(`\n${prompt()}${buff.join('')}`);
         }
 
         break;

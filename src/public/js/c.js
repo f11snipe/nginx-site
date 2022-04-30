@@ -1,4 +1,4 @@
-$(function(){var s,a,i=[],p=["wtf is going on","how did this console get here?","hopefully i can turn it off..."],t="/var/log/nginx",o=1e3,n=1e3,l="f11snipe",u="nginx",m=[{gid:0,name:"root"}],c=[{gid:n,name:l},{gid:1001,name:"web"}],h="x86_64",d="5.13.0-1022-aws",g="Linux",f="GNU/Linux",v=h,w=h,y=g+` ${u} ${d} #24~20.04.1-Ubuntu SMP Thu Apr 7 22:10:15 UTC 2022 ${v} ${h} ${w} `+f,k=`
+$(function(){var a,i,p=[],u=["wtf is going on","how did this console get here?","hopefully i can turn it off..."],t="/var/log/nginx",n=1e3,o=1e3,s="f11snipe",l="nginx",c=[{gid:0,name:"root"}],m=[{gid:o,name:s},{gid:1001,name:"web"}],d="x86_64",h="5.13.0-1022-aws",g="Linux",f="GNU/Linux",v=d,w=d,y=g+` ${l} ${h} #24~20.04.1-Ubuntu SMP Thu Apr 7 22:10:15 UTC 2022 ${v} ${d} ${w} `+f,k=`
 usage: sudo -h | -K | -k | -V
 usage: sudo -v [-AknS] [-g group] [-h host] [-p prompt] [-u user]
 usage: sudo -l [-AknS] [-g group] [-h host] [-p prompt] [-U user] [-u user] [command]
@@ -6,12 +6,12 @@ usage: sudo [-AbEHknPS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p pr
 usage: sudo -e [-AknS] [-r role] [-t type] [-C num] [-g group] [-h host] [-p prompt] [-T timeout] [-u user] file ...
 `,b=`
   total 69
-  -rw-r----- 1 ${l} ${l}    69 Apr 29 16:22 access.log
-  -rw-r----- 1 ${l} ${l}    69 Apr 29 16:22 error.log
-  -rw-r----- 1 ${l} ${l}    69 Apr 29 16:22 snipe.log
-  -rwxr-xr-x 1 ${l} ${l}   420 Apr 29 17:20 <span class="ex">watch</span>
-  `,A=()=>l+`@${u}:${t}# `,x=["/","$","\\","-","*","&","^","#","@"," ","!","(",")","[","]","|","'",'"',"Tab","ArrowUp","ArrowDown"],S=$("pre#console"),L={"snipe.log":"/logs/snipe.log","error.log":"/logs/error.log","access.log":"/logs/access.log",watch:"/logs/watch.sh"},T=Object.keys(L);function r(){var e=document.getElementById("console");e.scrollTop=e.scrollHeight}function e(){S.append(`
-`+A())}function U(e){s=setInterval(()=>{$.get(e,e=>{S.html(e),r()})},500)}var j=(e,r)=>{e=e[0]||T[0];s&&clearInterval(s),L[e]&&U(L[e])};function C(e,r){$.get(`/art/${e}.txt?art=curl`,r)}var K={id:(e,r)=>r(`uid=${o}(${l}) gid=${n}(${l}) groups=`+c.map(e=>`${e.gid}(${e.name})`).join(",")),cd:(e,r)=>{t=e[0],r("")},uname:(e,r)=>{if(!e[0])return r("Linux");switch(e[0]){case"-a":return r(y);case"-s":return r(g);case"-n":return r(u);case"-r":return r(d);case"-m":return r(v);case"-p":return r(h);case"-i":return r(w);case"-o":return r(f);case"--help":return r(`
+  -rw-r----- 1 ${s} ${s}    69 Apr 29 16:22 access.log
+  -rw-r----- 1 ${s} ${s}    69 Apr 29 16:22 error.log
+  -rw-r----- 1 ${s} ${s}    69 Apr 29 16:22 snipe.log
+  -rwxr-xr-x 1 ${s} ${s}   420 Apr 29 17:20 <span class="ex">watch</span>
+  `,x=()=>s+`@${l}:${t}# `,A=["/","$","\\","-","*","&","^","#","@"," ","!","(",")","[","]","|","'",'"',"<",">","Tab","ArrowUp","ArrowDown"],S=$("pre#console"),L={"snipe.log":"/logs/snipe.log","error.log":"/logs/error.log","access.log":"/logs/access.log",watch:"/logs/watch.sh"},T=Object.keys(L);function r(){var e=document.getElementById("console");e.scrollTop=e.scrollHeight}function e(){S.append(`
+`+x())}function U(e){a=setInterval(()=>{$.get(e,e=>{S.text(e),r()})},500)}var j=(e,r)=>{e=e[0]||T[0];a&&clearInterval(a),L[e]&&U(L[e])};function C(e,r){$.get(`/art/${e}.txt?art=curl`,r)}var K={id:(e,r)=>r(`uid=${n}(${s}) gid=${o}(${s}) groups=`+m.map(e=>`${e.gid}(${e.name})`).join(",")),cd:(e,r)=>{t=e[0],r("")},uname:(e,r)=>{if(!e[0])return r("Linux");switch(e[0]){case"-a":return r(y);case"-s":return r(g);case"-n":return r(l);case"-r":return r(h);case"-m":return r(v);case"-p":return r(d);case"-i":return r(w);case"-o":return r(f);case"--help":return r(`
 Usage: uname [OPTION]...
 Print certain system information.  With no OPTION, same as -s.
 
@@ -73,15 +73,15 @@ Options:
   -V, --version                 display version information and exit
   -v, --validate                update user's timestamp without running a command
   --                            stop processing command line arguments
-`):"su"===e[0]?(n=o=0,l="root",c=m,r("")):"-l"===e[0]?r(`
+`):"su"===e[0]?(o=n=0,s="root",m=c,r("")):"-l"===e[0]?r(`
 Matching Defaults entries for ubuntu on localhost:
   insults, env_reset, mail_badpass, secure_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 User ubuntu may run the following commands on localhost:
   (ALL : ALL) ALL
   (ALL) NOPASSWD: ALL
-`):r(k):r(k)},groups:(e,r)=>r(c.map(e=>e.name).join(" ")),ftw:(e,r)=>C("ftw",r),snipe:(e,r)=>C("ftw",r),f11snipe:(e,r)=>C("ftw",r),lol:(e,r)=>C("lol-70",r),derp:(e,r)=>C("derp-60",r),glhf:(e,r)=>C("glhf",r),pwd:(e,r)=>r(t),ssh:(e,r)=>r("You wish!"),exit:(e,r)=>{"f11snipe"!==l?(n=o=1e3,l="f11snipe",r("")):r("Umm, noooo")},help:(e,r)=>r("NO!"),shit:(e,r)=>r("Watch your language!"),fuck:(e,r)=>r("Watch your language!"),host:(e,r)=>r(u),hostname:(e,r)=>r(u),tail:j,watch:j,"./watch":j,whoami:(e,r)=>r(l),clear:(e,r)=>{S.html(""),r("")},history:(e,r)=>r(p.map((e,r)=>(r+1).toString().padStart(5)+`	`+e).join(`
-`)),cat:(e,r)=>{e=e[0];if(!e||!L[e])return r("hmmm, not sure what you lookin for...");$.get(L[e],r)},ls:(e,r)=>{var t=/^-[a-z]*l[a-z]*/;e[0]&&t.test(e[0])?e[0]&&t.test(e[0])&&r(b):r('access.log  error.log  snipe.log  <span class="ex">watch</span>')}},O=()=>{p.push(i.join("")),i=[],a=null,e(),r()};$(document).on("keydown",function(e){if(S.hasClass("active")){switch(e.key){case"Tab":var r=i.join("").trim().split(" ").map(e=>e.trim()).pop().replace(/^\.\//,"");T.forEach(e=>{0===e.indexOf(r)&&(e=e.substring(r.length),S.append(e),i=i.concat(Array.from(e)))});break;case"Enter":o=(n=i.join("").split(" "))[0],n=n.slice(1),S.append(`
-`),K[o]&&"function"==typeof K[o]?K[o](n,e=>{S.append(e),O()}):(""!==o&&S.append(`Command '${o}' not found.`),O());break;case"Backspace":i.length&&(S.html(S.html().slice(0,-1)),i.pop());break;case"ArrowUp":0<(a=a||p.length)&&(a--,i=Array.from(p[a]),S.html(`
-`+A()+i.join("")));break;case"ArrowDown":a&&a<p.length-1&&(a++,i=Array.from(p[a]),S.html(`
-`+A()+i.join("")));break;default:if(e.altKey||e.ctrlKey||e.shiftKey){var t=e;switch(t.key){case"c":case"C":case"d":case"D":case"z":case"Z":t.ctrlKey&&s&&(clearInterval(s),O());break;case"v":case"V":t.ctrlKey&&navigator.clipboard.readText().then(e=>{e&&(S.append(e),i=i.concat(Array.from(e)))});break;default:t.ctrlKey&&t.shiftKey||1===t.key.length&&(S.append(t.key),i.push(t.key))}}else 1===e.key.length&&(S.append(e.key),i.push(e.key))}var o,n;return x.includes(e.key)?(e.preventDefault(),!1):void 0}}),S.on("click",function(e){S.addClass("active")}),e()});
+`):r(k):r(k)},groups:(e,r)=>r(m.map(e=>e.name).join(" ")),ftw:(e,r)=>C("ftw",r),snipe:(e,r)=>C("ftw",r),f11snipe:(e,r)=>C("ftw",r),lol:(e,r)=>C("lol-70",r),derp:(e,r)=>C("derp-60",r),glhf:(e,r)=>C("glhf",r),pwd:(e,r)=>r(t),ssh:(e,r)=>r("You wish!"),exit:(e,r)=>{"f11snipe"!==s?(o=n=1e3,s="f11snipe",r("")):r("Umm, noooo")},help:(e,r)=>r("NO!"),shit:(e,r)=>r("Watch your language!"),fuck:(e,r)=>r("Watch your language!"),host:(e,r)=>r(l),hostname:(e,r)=>r(l),tail:j,watch:j,"./watch":j,whoami:(e,r)=>r(s),clear:(e,r)=>{S.text(""),r("")},history:(e,r)=>r(u.map((e,r)=>(r+1).toString().padStart(5)+`	`+e).join(`
+`)),cat:(e,r)=>{e=e[0];if(!e||!L[e])return r("hmmm, not sure what you lookin for...");$.get(L[e],r)},ls:(e,r)=>{var t=/^-[a-z]*l[a-z]*/;e[0]&&t.test(e[0])?e[0]&&t.test(e[0])&&r(b):r('access.log  error.log  snipe.log  <span class="ex">watch</span>')}},O=()=>{u.push(p.join("")),p=[],i=null,e(),r()};$(document).on("keydown",function(e){if(S.hasClass("active")){switch(e.key){case"Tab":var r=p.join("").trim().split(" ").map(e=>e.trim()).pop().replace(/^\.\//,"");T.forEach(e=>{0===e.indexOf(r)&&(e=e.substring(r.length),S.append(e),p=p.concat(Array.from(e)))});break;case"Enter":var t=p.join("").trim(),n=(t=$(`<span>${t}</span>`).text().split(" ").map(e=>e.trim()))[0],t=t.slice(1);if(S.append(`
+`),K[n]&&"function"==typeof K[n]){const s=["ls"];K[n](t,e=>{s.includes(n)?S.append(e):S.append($(`<span>${e}</span>`).text()),O()})}else""!==n&&S.append(`Command '${n}' not found.`),O();break;case"Backspace":p.length&&(S.text(S.text().slice(0,-1)),p.pop());break;case"ArrowUp":0<(i=i||u.length)&&(i--,p=Array.from(u[i]),S.text(`
+`+x()+p.join("")));break;case"ArrowDown":i&&i<u.length-1&&(i++,p=Array.from(u[i]),S.text(`
+`+x()+p.join("")));break;default:if(e.altKey||e.ctrlKey||e.shiftKey){var o=e;switch(o.key){case"c":case"C":case"d":case"D":case"z":case"Z":o.ctrlKey&&a&&(clearInterval(a),O());break;case"v":case"V":o.ctrlKey&&navigator.clipboard.readText().then(e=>{e&&(S.append(e),p=p.concat(Array.from(e)))});break;default:o.ctrlKey&&o.shiftKey||1===o.key.length&&(S.append(o.key),p.push(o.key))}}else 1===e.key.length&&(S.append(e.key),p.push(e.key))}return A.includes(e.key)?(e.preventDefault(),!1):void 0}}),S.on("click",function(e){S.addClass("active")}),e()});
