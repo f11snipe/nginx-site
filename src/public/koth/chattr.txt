@@ -1,0 +1,54 @@
+chattr flags + int maps
+
+Flags: -+=aAcCdDeijsStTu
+
+a = 32
+A = 128
+c = 4
+C = 8388608
+d = 64
+D = 0
+e = 524288
+i = 16
+j = 16384
+s = 1
+S = 8
+t = 32768
+T = 131072
+u = 2
+
+
+In incremental value order
+
+LOL: Mean trolling "suc it" flashing for "lsattr"
+
+# while true; do sleep 2; kill -62 80085; done
+
+suc = 1+2+4 => 7
+it = 16+32768 => 32784
+
+D = 0
+s = 1
+u = 2
+c = 4
+S = 8
+i = 16
+a = 32
+d = 64
+A = 128
+? = 256 (flag?)
+? = 512 (flag?)
+? = 1024 (flag?)
+? = 2048 (flag?)
+? = 4096 (flag?)
+? = 8192 (flag?)
+j = 16384
+t = 32768
+? = 65536 (flag?)
+T = 131072
+? = 262144
+e = 524288
+? = 1048576 (flag?)
+? = 2097152 (flag?)
+? = 4194304 (flag?)
+C = 8388608
