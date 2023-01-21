@@ -20,10 +20,7 @@ u = 2
 
 In incremental value order
 
-LOL: Mean trolling "suc it" flashing for "lsattr"
-
-# while true; do sleep 2; kill -62 80085; done
-
+# Examples ;)
 suc = 1+2+4 => 7
 it = 16+32768 => 32784
 
