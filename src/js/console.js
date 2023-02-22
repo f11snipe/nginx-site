@@ -185,6 +185,9 @@ User ubuntu may run the following commands on localhost:
       cwd = args[0];
       cb('');
     },
+    flag: (args, cb) => {
+      cb(`Awww, ok ... F11[chattrcleanup]`);
+    },
     uname: (args, cb) => {
       if (!args[0]) return cb('Linux');
 
