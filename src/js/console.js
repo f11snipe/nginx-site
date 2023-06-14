@@ -76,6 +76,49 @@ User ubuntu may run the following commands on localhost:
   (ALL) NOPASSWD: ALL
 `;
 
+  var rmHelp = `
+Usage: rm [OPTION]... [FILE]...
+Remove (unlink) the FILE(s).
+
+  -f, --force           ignore nonexistent files and arguments, never prompt
+  -i                    prompt before every removal
+  -I                    prompt once before removing more than three files, or
+                          when removing recursively; less intrusive than -i,
+                          while still giving protection against most mistakes
+      --interactive[=WHEN]  prompt according to WHEN: never, once (-I), or
+                          always (-i); without WHEN, prompt always
+      --one-file-system  when removing a hierarchy recursively, skip any
+                          directory that is on a file system different from
+                          that of the corresponding command line argument
+      --no-preserve-root  do not treat '/' specially
+      --preserve-root[=all]  do not remove '/' (default);
+                              with 'all', reject any command line argument
+                              on a separate device from its parent
+  -r, -R, --recursive   remove directories and their contents recursively
+  -d, --dir             remove empty directories
+  -v, --verbose         explain what is being done
+      --help     display this help and exit
+      --version  output version information and exit
+
+By default, rm does not remove directories.  Use the --recursive (-r or -R)
+option to remove each listed directory, too, along with all of its contents.
+
+To remove a file whose name starts with a '-', for example '-foo',
+use one of these commands:
+  rm -- -foo
+
+  rm ./-foo
+
+Note that if you use rm to remove a file, it might be possible to recover
+some of its contents, given sufficient expertise and/or time.  For greater
+assurance that the contents are truly unrecoverable, consider using shred.
+
+GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
+Report any translation bugs to <https://translationproject.org/team/>
+Full documentation <https://www.gnu.org/software/coreutils/rm>
+or available locally via: info '(coreutils) rm invocation'
+`;
+
   var lsOut = `access.log  error.log  snipe.log  watch`;
   var lsAll = `
   total 69
@@ -95,6 +138,142 @@ User ubuntu may run the following commands on localhost:
     'watch': '/logs/watch.sh'
   };
   var allowFiles = Object.keys(fileMap);
+
+  var fakeFs = {
+    'bin': {
+      'bash': '',
+      'cat': '',
+      'chgrp': '',
+      'chmod': '',
+      'chown': '',
+      'cp': '',
+      'dash': '',
+      'date': '',
+      'dd': '',
+      'df': '',
+      'dir': '',
+      'dmesg': '',
+      'dnsdomainname': '',
+      'domainname': '',
+      'echo': '',
+      'egrep': '',
+      'false': '',
+      'fgrep': '',
+      'findmnt': '',
+      'grep': '',
+      'gunzip': '',
+      'gzexe': '',
+      'gzip': '',
+      'hostname': '',
+      'ln': '',
+      'login': '',
+      'ls': '',
+      'lsblk': '',
+      'mkdir': '',
+      'mknod': '',
+      'mktemp': '',
+      'more': '',
+      'mount': '',
+      'mountpoint': '',
+      'mv': '',
+      'nisdomainname': '',
+      'pidof': '',
+      'pwd': '',
+      'rbash': '',
+      'readlink': '',
+      'rm': '',
+      'rmdir': '',
+      'run-parts': '',
+      'sed': '',
+      'sh': '',
+      'sleep': '',
+      'stty': '',
+      'su': '',
+      'sync': '',
+      'tar': '',
+      'tempfile': '',
+      'touch': '',
+      'true': '',
+      'umount': '',
+      'uname': '',
+      'uncompress': '',
+      'vdir': '',
+      'wdctl': '',
+      'ypdomainname': '',
+      'zcat': '',
+      'zcmp': '',
+      'zdiff': '',
+      'zegrep': '',
+      'zfgrep': '',
+      'zforce': '',
+      'zgrep': '',
+      'zless': '',
+      'zmore': '',
+      'znew': '',
+    },
+    'boot': {},
+    'dev': {},
+    'etc': {
+      'hostname': '',
+      'nginx': {
+        'nginx.conf': '',
+      }
+    },
+    'home': {
+      'f11snipe': {
+        '.bashrc': '',
+      }
+    },
+    'lib': {},
+    'media': {},
+    'mnt': {},
+    'opt': {},
+    'proc': {},
+    'root': {
+      '.bashrc': '',
+      'root.txt': '',
+    },
+    'sbin': {},
+    'srv': {},
+    'tmp': {
+      'tmp-1325ab1351ac91': {},
+    },
+    'usr': {
+      'bin': {},
+      'games': {},
+      'include': {},
+      'lib': {},
+      'libexec': {},
+      'local': {},
+      'sbin': {},
+      'share': {},
+      'src': {},
+    },
+    'var': {
+      'backups': {},
+      'cache': {},
+      'lib': {},
+      'local': {},
+      'log': {
+        'auth.log': '',
+        'btmp': '',
+        'dpkg.log': '',
+        'faillog': '',
+        'lastlog': '',
+        'nginx': {
+          'snipe.log': '',
+          'error.log': '',
+          'access.log': '',
+          'watch': '',
+        },
+        'wtmp': '',
+      },
+      'mail': {},
+      'opt': {},
+      'spool': {},
+      'tmp': {},
+    },
+  }
 
   function scroll() {
     var elem = document.getElementById('console');
@@ -179,11 +358,64 @@ User ubuntu may run the following commands on localhost:
       cat /root/.ssh/id_rsa
    */
 
+  function resolvePath(path, cb) {
+    var context = fakeFs;
+    var parent = fakeFs;
+    var cwdParts = cwd.split('/').filter(p => p);
+    var newPath = path;
+    newPath = newPath.replace(/\/+/g, '/');
+
+    if (newPath[0] === '/') {
+      cwdParts = [];
+    }
+
+    newPath.split('/').filter(p => p).forEach(pathPart => {
+      if (pathPart === '..') {
+        cwdParts.pop();
+      } else {
+        cwdParts.push(pathPart);
+      }
+    });
+
+    for (var i = 0; i < cwdParts.length; i++) {
+      var parent = context;
+      var step = context[cwdParts[i]];
+
+      if (typeof step === 'undefined') {
+        return cb(`'${newPath}': No such file or directory`);
+      } else {
+        context = step;
+      }
+    }
+
+    var res = cwdParts.join('/');
+
+    if (res[0] !== '/') {
+      res = '/' + res;
+    }
+
+    cb(null, res, context, parent, cwdParts[cwdParts.length-1]);
+  }
+
   var troll = {
     id: (args, cb) => cb(`uid=${uid}(${user}) gid=${gid}(${user}) groups=${groups.map(g => `${g.gid}(${g.name})`).join(',')}`),
     cd: (args, cb) => {
-      cwd = args[0];
-      cb('');
+      if (args[0]) {
+        resolvePath(args[0], (err, path, ctx) => {
+          if (err) {
+            cb(`bash: cd: ${err}`);
+          } else {
+            if (typeof ctx === 'string') {
+              cb(`bash: cd: '${path}': Not a directory`);
+            } else {
+              cwd = path;
+              cb('');
+            }
+          }
+        });
+      } else {
+        cb('');
+      }
     },
     flag: (args, cb) => {
       cb(`Awww, ok ... F11[chattrcleanup]`);
@@ -299,12 +531,53 @@ Try 'uname --help' for more information.
     },
     ls: (args, cb) => {
       var lsTest = /^-[a-z]*l[a-z]*/;
+      var lsPath = args.filter(a => a[0] !== '-')[0] || cwd;
+      var lsExtra = args.filter(a => lsTest.test(a)).length > 0;
 
-      if (!args[0] || !lsTest.test(args[0])) {
-        cb(lsOut);
-      } else if (args[0] && lsTest.test(args[0])) {
-        cb(lsAll);
+      resolvePath(lsPath, (err, path, ctx) => {
+        if (err) {
+          cb(`ls: cannot access ${err}`);
+        } else {
+          var lines = Object.keys(ctx).map(fsKey => {
+            fsVal = ctx[fsKey];
+
+            if (lsExtra) {
+              if (typeof fsVal === 'object') {
+                return `drwxr-xr-x   1 root root 4096 Feb  2 00:00 ${fsKey}`;
+              } else {
+                return `-rwxr-xr-x   1 root root 1234 Feb  2 00:00 ${fsKey}`;
+              }
+            } else {
+              return fsKey;
+            }
+          });
+
+          cb(lines.join(`\n`));
+        }
+      });
+    },
+    rm: (args, cb) => {
+      var rmPath = args.filter(a => a[0] !== '-')[0];
+
+      if (!rmPath) {
+        return cb(`rm: missing operand\nTry 'rm --help' for more information.`);
       }
+
+      if (args.filter(a => a === '--help').length) {
+        return cb(rmHelp);
+      }
+
+      resolvePath(rmPath, (err, path, ctx, par, key) => {
+        if (err) {
+          cb(`rm: cannot remove ${err}`);
+        } else {
+          delete par[key];
+          cb('');
+        }
+      });
+    },
+    mv: (args, cb) => {
+      cb('COMING SOON LOL ...');
     },
   };
 
