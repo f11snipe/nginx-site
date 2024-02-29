@@ -7,6 +7,14 @@ sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
+if [[ "$VERSION_CODENAME" == "" ]]; then
+  VERSION_CODENAME=$(lsb_release -c | awk '{print $2}')
+fi
+
+echo '--'
+echo "USING VERSION_CODENAME='$VERSION_CODENAME'"
+echo '--'
+
 # Add the repository to Apt sources:
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
